@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://cdn.tailwindcss.com">
+    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Access</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .access-transition {
+        transition: all 0.3s ease;
+}
+   </style>
+ </head>
+<body class="bg-gray-900 min-h-screen">
+          <!-- Access Gate -->
+<div id="accessGate" class="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-center justify-center p-4 access-transition">
+    <div class="bg-gray-800 rounded-xl p-8 max-w-md w-full border border-gray-700">
+        <div class="text-center space-y-6">
+            <h1 class="text-3xl font-bold text-emerald-400">
+                <span class="text-white">Private</span> Archive
+</h1>
+                
+<div class="space-y-4">
+    <input 
+         type="password" 
+         id="accessCode" 
+         class="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" 
+             placeholder="Enter Access Code"
+             autocomplete="off">
+<button 
+             onclick="verifyAccess()" 
+             class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"> Unlock
+  </button>
+</div>
+                
+<p class="text-gray-400 text-sm">
+Contact administrator for access credentials
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Indicator (hidden by default) -->
+<div id="loadingIndicator" class="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-center justify-center p-4 hidden">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+        <p class="text-white font-medium">Verifying access...</p>
+  </div>
+</div>
+
+<script>
+        // Configuration
+const validCodes = ['randy', 'clara'];
+const redirectDelay = 1000; // 1 second delay before redirect
+const maxAttempts = 5;
+let failedAttempts = 0;
+
+        function verifyAccess() {
+            const inputCode = document.getElementById('accessCode').value.trim();
+            const accessGate = document.getElementById('accessGate');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            // Show loading indicator
+            accessGate.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+
+            // Simulate server verification delay
+            setTimeout(() => {
+                if (validCodes.includes(inputCode)) {
+                    // Successful authentication
+                    sessionStorage.setItem('authenticated', 'true');
+                    
+                    // Redirect to index.html after a brief delay
+                    setTimeout(() => {
+                        window.location.href = "home.html";
+                    }, redirectDelay);
+                } else {
+                    // Failed authentication
+                    failedAttempts++;
+                    loadingIndicator.classList.add('hidden');
+                    accessGate.classList.remove('hidden');
+                    
+                    if (failedAttempts >= maxAttempts) {
+                        alert('Maximum attempts reached. Please try again later.');
+                        document.getElementById('accessCode').disabled = true;
+                        setTimeout(() => {
+                            document.getElementById('accessCode').disabled = false;
+                            failedAttempts = 0;
+                        }, 30000); // 30 second lockout
+                    } else {
+                        alert(`Invalid access code. ${maxAttempts - failedAttempts} attempts remaining.`);
+                    }
+                    document.getElementById('accessCode').value = '';
+                    document.getElementById('accessCode').focus();
+                }
+            }, 800); // Simulated verification delay
+        }
+
+        // Check authentication status on page load
+        window.onload = () => {
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                window.location.href = "home.html";
+            } else {
+                document.getElementById('accessCode').focus();
+            }
+        };
+
+        // Allow form submission with Enter key
+        document.getElementById('accessCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyAccess();
+            }
+        });
+    </script>
+</body>
+</html>
