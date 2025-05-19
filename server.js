@@ -8,7 +8,7 @@ const app = express();
 const PORT = 3000;
 
 // Konfigurasi middleware
-app.use(cors({ credentials: true, origin: 'http://localhost:5500' })); // Sesuaikan dengan origin frontend
+app.use(cors({ credentials: true, origin: 'http://private-videoo.netlify.app' })); // Sesuaikan dengan origin frontend
 app.use(express.json());
 app.use(
   session({
@@ -64,5 +64,5 @@ app.get('/api/video/:id', checkAuth, (req, res) => {
 
 // Jalankan server
 app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
+  console.log(`Server berjalan di https://private-videoo.netlify.app:${PORT}`);
 });
